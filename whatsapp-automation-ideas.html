@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Automation Playbook — Saudi eCommerce</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0F0A;
+  --bg2: #0D130D;
+  --green: #25D366;
+  --green-bright: #2EF07A;
+  --green-dim: #1A9448;
+  --green-glow: rgba(37,211,102,0.12);
+  --green-border: rgba(37,211,102,0.18);
+  --white: #F0F5F0;
+  --muted: #6B7B6B;
+  --card: #0F160F;
+  --card2: #111811;
+  --yellow: #FFD166;
+  --blue: #5BC8F5;
+  --orange: #FF8C42;
+  --red: #FF5757;
+  --purple: #C084FC;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--green-dim); }
+
+/* NOISE */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.5;
+}
+
+/* HEADER */
+.header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 100px 80px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--green-border);
+}
+
+.header-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(37,211,102,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,211,102,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.header-glow {
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, rgba(37,211,102,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.header-glow2 {
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(ellipse, rgba(37,211,102,0.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.wa-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(37,211,102,0.08);
+  border: 1px solid var(--green-border);
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 48px;
+  position: relative;
+  z-index: 2;
+}
+
+.wa-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--green);
+  animation: blink 1.5s ease infinite;
+}
+
+@keyframes blink {
+  0%,100%{opacity:1;} 50%{opacity:0.3;}
+}
+
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -3px;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+h1 .accent { color: var(--green); }
+h1 .dim { color: rgba(240,245,240,0.3); }
+
+.header-sub {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 580px;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+  line-height: 1.8;
+}
+
+.stats-row {
+  display: flex;
+  gap: 48px;
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+}
+
+.hs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hs-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.hs-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* NAV TABS */
+.nav-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,15,10,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--green-border);
+  padding: 0 80px;
+  overflow-x: auto;
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+}
+
+.nav-tab {
+  padding: 20px 28px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-tab:hover { color: var(--white); }
+.nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+.nav-tab .count {
+  background: rgba(37,211,102,0.15);
+  color: var(--green);
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 100px;
+}
+
+/* MAIN */
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 80px;
+}
+
+/* CATEGORY SECTION */
+.cat-section {
+  margin-bottom: 120px;
+}
+
+.cat-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 48px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(37,211,102,0.08);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cat-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.cat-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.1;
+}
+
+.cat-roi-total {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.roi-big {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -1px;
+}
+
+.roi-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* IDEA CARDS GRID */
+.ideas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+.idea-card {
+  background: var(--card);
+  border: 1px solid rgba(37,211,102,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.idea-card:hover {
+  border-color: rgba(37,211,102,0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(37,211,102,0.04);
+}
+
+.card-top {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid rgba(37,211,102,0.06);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-type {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-weight: 500;
+}
+
+.type-utility { background: rgba(91,200,245,0.12); color: var(--blue); }
+.type-marketing { background: rgba(255,209,102,0.12); color: var(--yellow); }
+.type-retention { background: rgba(37,211,102,0.12); color: var(--green); }
+.type-winback { background: rgba(192,132,252,0.12); color: var(--purple); }
+.type-prevention { background: rgba(255,87,87,0.12); color: var(--red); }
+.type-vip { background: rgba(255,140,66,0.12); color: var(--orange); }
+
+.roi-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.roi-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green-bright);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.roi-sub {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* MESSAGE PREVIEW */
+.msg-preview {
+  padding: 20px 28px;
+  background: var(--card2);
+  position: relative;
+}
+
+.msg-preview-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.msg-preview-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(37,211,102,0.08);
+}
+
+.wa-bubble {
+  background: rgba(37,211,102,0.08);
+  border: 1px solid rgba(37,211,102,0.1);
+  border-radius: 0 12px 12px 12px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: rgba(240,245,240,0.85);
+  max-width: 90%;
+  position: relative;
+}
+
+.wa-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -8px;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 8px 8px 0;
+  border-color: transparent rgba(37,211,102,0.1) transparent transparent;
+}
+
+.wa-var {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.wa-bold { font-weight: 600; color: var(--white); }
+.wa-emoji { font-style: normal; }
+
+.wa-time {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  gap: 4px;
+  align-items: center;
+}
+
+/* CARD BOTTOM */
+.card-bottom {
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trigger-label {
+  font-size: 10px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trigger-label span {
+  color: var(--white);
+  font-weight: 400;
+}
+
+.impact-bar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.impact-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green-dim);
+}
+
+.impact-dot.on { background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+/* WIDE CARD */
+.idea-card.wide {
+  grid-column: span 2;
+}
+
+/* MASTER ROI STRIP */
+.roi-strip {
+  background: linear-gradient(135deg, rgba(37,211,102,0.06), rgba(37,211,102,0.02));
+  border: 1px solid var(--green-border);
+  padding: 60px 80px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background-color: rgba(37,211,102,0.06);
+  margin: 0 0 120px;
+}
+
+.roi-strip-inner {
+  background: var(--bg);
+  padding: 40px 32px;
+  text-align: center;
+}
+
+.rs-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.rs-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+/* FLOW DIAGRAM */
+.flow-wrap {
+  background: var(--card);
+  border: 1px solid var(--green-border);
+  padding: 48px;
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 36px;
+}
+
+.flow-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 140px;
+}
+
+.flow-node {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2px solid var(--green-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: rgba(37,211,102,0.05);
+  position: relative;
+  z-index: 2;
+}
+
+.flow-node.active {
+  border-color: var(--green);
+  box-shadow: 0 0 20px rgba(37,211,102,0.2);
+}
+
+.flow-connector {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(to right, var(--green-dim), rgba(37,211,102,0.3));
+  margin-top: 26px;
+  min-width: 40px;
+  position: relative;
+}
+
+.flow-connector::after {
+  content: '▶';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--green-dim);
+  font-size: 10px;
+}
+
+.flow-time {
+  font-size: 9px;
+  color: var(--green);
+  margin-top: 10px;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.flow-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* FOOTER */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--green-border);
+  padding: 60px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.footer-brand {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -1px;
+}
+
+.footer-note {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+@media(max-width: 900px) {
+  .header, main { padding: 60px 24px; }
+  .nav-sticky { padding: 0 24px; }
+  .ideas-grid { grid-template-columns: 1fr; }
+  .idea-card.wide { grid-column: span 1; }
+  .roi-strip { grid-template-columns: 1fr 1fr; padding: 24px; }
+  .stats-row { gap: 24px; }
+  footer { padding: 40px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-grid"></div>
+  <div class="header-glow"></div>
+  <div class="header-glow2"></div>
+
+  <div class="wa-badge">
+    <div class="wa-dot"></div>
+    WhatsApp Automation Playbook
+  </div>
+
+  <h1>
+    You Have<br>
+    Their <span class="accent">Number.</span><br>
+    <span class="dim">Use Every Bit of It.</span>
+  </h1>
+
+  <p class="header-sub">
+    40+ battle-tested WhatsApp automation ideas for Saudi ecom brands — perfumes, jewelry, fashion, home décor. Every message includes the exact copy, trigger logic, and measured ROI.
+  </p>
+
+  <div class="stats-row">
+    <div class="hs">
+      <div class="hs-num">98%</div>
+      <div class="hs-label">WhatsApp Open Rate in KSA</div>
+    </div>
+    <div class="hs">
+      <div class="hs-num">40+</div>
+      <div class="hs-label">Automation Ideas</div>
+    </div>
+    <div class="hs">
+      <div class="hs-num">8</div>
+      <div class="hs-label">Revenue Categories</div>
+    </div>
+    <div class="hs">
+      <div class="hs-num">3min</div>
+      <div class="hs-label">Avg. Reply Time Saved</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-sticky">
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="scrollTo('utility')">📦 Order & Delivery <span class="count">7</span></div>
+    <div class="nav-tab" onclick="scrollTo('cart')">🛒 Cart & Browse <span class="count">5</span></div>
+    <div class="nav-tab" onclick="scrollTo('retention')">🔁 Retention & Repeat <span class="count">8</span></div>
+    <div class="nav-tab" onclick="scrollTo('returns')">↩ Return Prevention <span class="count">5</span></div>
+    <div class="nav-tab" onclick="scrollTo('marketing')">📣 Proactive Marketing <span class="count">6</span></div>
+    <div class="nav-tab" onclick="scrollTo('vip')">👑 VIP & Loyalty <span class="count">5</span></div>
+    <div class="nav-tab" onclick="scrollTo('satisfaction')">⭐ Satisfaction & Reviews <span class="count">4</span></div>
+    <div class="nav-tab" onclick="scrollTo('winback')">💔 Win-Back <span class="count">4</span></div>
+  </div>
+</nav>
+
+<main>
+
+<!-- MASTER ROI STRIP -->
+<div style="margin-bottom: 16px; margin-top: 0;">
+  <div class="roi-strip" style="padding: 0; margin: 0 0 80px;">
+    <div class="roi-strip-inner">
+      <div class="rs-num">+42%</div>
+      <div class="rs-label">Avg. Repeat Purchase Rate Lift</div>
+    </div>
+    <div class="roi-strip-inner">
+      <div class="rs-num">67%</div>
+      <div class="rs-label">Return Rate Reduction</div>
+    </div>
+    <div class="roi-strip-inner">
+      <div class="rs-num">3.2x</div>
+      <div class="rs-label">LTV Increase Year 1</div>
+    </div>
+    <div class="roi-strip-inner">
+      <div class="rs-num">18hrs</div>
+      <div class="rs-label">Weekly Staff Hours Saved</div>
+    </div>
+    <div class="roi-strip-inner">
+      <div class="rs-num">SAR 0</div>
+      <div class="rs-label">Extra Ad Spend Required</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================ -->
+<!-- SECTION 1: ORDER & DELIVERY UTILITY -->
+<!-- ============================================ -->
+<section class="cat-section" id="utility">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 01 — Utility</div>
+      <h2 class="cat-title">📦 Order & Delivery<br>Automation</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">−72%</div>
+      <div class="roi-label">Support Ticket Volume</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">−3hrs</div><div class="roi-sub">daily staff time</div></div>
+        </div>
+        <h3 class="card-title">Instant Order Confirmation</h3>
+        <p class="card-desc">Fires the second payment clears. Eliminates the "did my order go through?" flood of WhatsApp messages your team currently drowns in.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">✅ </span><span class="wa-bold">تم استلام طلبك!</span><br><br>
+          أهلاً <span class="wa-var">{{اسم العميل}}</span>، تم تأكيد طلبك رقم <span class="wa-var">{{#12847}}</span> بنجاح 🎉<br><br>
+          <span class="wa-bold">ملخص الطلب:</span><br>
+          <span class="wa-var">{{اسم المنتج}} × {{الكمية}}</span><br>
+          الإجمالي: <span class="wa-var">{{المبلغ}}</span> ريال<br><br>
+          سنرسل لك رابط التتبع فور الشحن. شكراً لثقتك بنا! 🙏
+          <div class="wa-time">✓✓ 10:32</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Payment confirmed</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">−60%</div><div class="roi-sub">"where's my order" msgs</div></div>
+        </div>
+        <h3 class="card-title">Shipment Dispatched + Live Tracking Link</h3>
+        <p class="card-desc">Sent the moment Aramex/SMSA/Naqel picks up. Includes a real-time tracking link. Proactively answering before they even ask cuts "where is my order?" messages by more than half.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🚚 </span><span class="wa-bold">طلبك في الطريق إليك!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، تم تسليم طلبك لشركة الشحن وهو الآن على الطريق 🎁<br><br>
+          رقم التتبع: <span class="wa-var">{{1234567890}}</span><br>
+          تابع شحنتك مباشرة: <span class="wa-var">{{رابط التتبع}}</span><br><br>
+          الوصول المتوقع: <span class="wa-var">{{اليوم/التاريخ}}</span><br><br>
+          أي استفسار؟ رد على هذه الرسالة 💬
+          <div class="wa-time">✓✓ 2:17</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Courier pickup scan</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">+23%</div><div class="roi-sub">first-attempt delivery</div></div>
+        </div>
+        <h3 class="card-title">Delivery Day Morning Alert</h3>
+        <p class="card-desc">Sent at 8am on the scheduled delivery day. Dramatically improves first-attempt success and eliminates failed delivery fees you're eating silently.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🌅 </span><span class="wa-bold">طلبك يصلك اليوم!</span><br><br>
+          صباح الخير <span class="wa-var">{{اسم العميل}}</span>!<br>
+          طلبك رقم <span class="wa-var">{{#12847}}</span> سيصل إليك اليوم إن شاء الله بين الساعة <span class="wa-var">{{9ص - 9م}}</span> 📦<br><br>
+          يرجى التأكد من وجود شخص في العنوان لاستلام الطلب.<br><br>
+          🏠 عنوان التسليم: <span class="wa-var">{{العنوان}}</span>
+          <div class="wa-time">✓✓ 8:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivery date = today, 8:00 AM</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">−45%</div><div class="roi-sub">failed COD deliveries</div></div>
+        </div>
+        <h3 class="card-title">COD Delivery Preparation Alert</h3>
+        <p class="card-desc">For cash-on-delivery orders specifically. Sent 2 hours before estimated delivery. Prepares the customer, reduces failed attempts, and dramatically cuts RTO losses.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">💵 </span><span class="wa-bold">تذكير: الدفع عند الاستلام</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، المندوب في طريقه إليك! 🚗<br><br>
+          يرجى تجهيز مبلغ <span class="wa-var">{{245}}</span> ريال نقداً عند الاستلام.<br><br>
+          لتأكيد أو إعادة جدولة التسليم اضغط هنا:<br>
+          ✅ تأكيد | 🔄 إعادة جدولة
+          <div class="wa-time">✓✓ 3:45</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>COD order + 2hrs before delivery</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">+18%</div><div class="roi-sub">redelivery success rate</div></div>
+        </div>
+        <h3 class="card-title">Failed Delivery Re-Attempt Flow</h3>
+        <p class="card-desc">Fires when a delivery attempt fails. Smart message that reschedules delivery instead of silently letting the order return to warehouse and creating a logistics nightmare + refund.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">⚠️ </span><span class="wa-bold">لم نتمكن من التسليم</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، حاول المندوب التواصل معك ولم يتمكن من تسليم طلبك.<br><br>
+          لإعادة جدولة التسليم يرجى الرد:<br>
+          1️⃣ الغد صباحاً<br>
+          2️⃣ الغد مساءً<br>
+          3️⃣ تحديد وقت مختلف<br><br>
+          ملاحظة: الطلب محجوز لمدة 3 أيام فقط ⏳
+          <div class="wa-time">✓✓ 6:20</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivery status = "Attempted, no one home"</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">+31%</div><div class="roi-sub">immediate repurchase</div></div>
+        </div>
+        <h3 class="card-title">Delivered Confirmation + Soft Upsell</h3>
+        <p class="card-desc">Sent 1 hour after confirmed delivery. The customer is holding their purchase, emotional high is at its peak — the perfect moment for a soft, relevant upsell suggestion.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🎉 </span><span class="wa-bold">وصل طلبك بسلامة!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span> نتمنى أن تكون سعيداً بطلبك! ✨<br><br>
+          💡 <span class="wa-bold">ربما يعجبك أيضاً:</span><br>
+          <span class="wa-var">{{المنتج المقترح}}</span> — يكمل اختيارك تماماً<br><br>
+          تسوق الآن: <span class="wa-var">{{رابط المنتج}}</span>
+          <div class="wa-time">✓✓ 4:10</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Status = Delivered + 1 hour delay</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-utility">Utility</span>
+          <div class="roi-badge"><div class="roi-value">−80%</div><div class="roi-sub">payment confusion calls</div></div>
+        </div>
+        <h3 class="card-title">Tabby / Tamara Installment Reminder</h3>
+        <p class="card-desc">For BNPL orders — reminds customers 2 days before each installment is due. Reduces chargebacks and builds financial trust in your brand experience.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">📅 </span><span class="wa-bold">تذكير بالدفعة القادمة</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، تذكير ودي: دفعتك القادمة لطلب <span class="wa-var">{{اسم المنتج}}</span> ستُخصم بعد يومين.<br><br>
+          المبلغ: <span class="wa-var">{{82.5}}</span> ريال<br>
+          التاريخ: <span class="wa-var">{{15 يناير}}</span><br><br>
+          تأكد من توفر الرصيد في حسابك ✅
+          <div class="wa-time">✓✓ 9:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>BNPL installment date − 2 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 2: CART & BROWSE -->
+<!-- ============================================ -->
+<section class="cat-section" id="cart">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 02 — Recovery</div>
+      <h2 class="cat-title">🛒 Cart & Browse<br>Recovery</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">+32%</div>
+      <div class="roi-label">Avg. Cart Recovery Rate</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Recovery</span>
+          <div class="roi-badge"><div class="roi-value">+28%</div><div class="roi-sub">cart conversion</div></div>
+        </div>
+        <h3 class="card-title">First Cart Abandonment Nudge (30 min)</h3>
+        <p class="card-desc">Soft first touch. No discount yet — just a gentle reminder with the product image. The majority of recoveries happen at this stage, preserving your margin.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🛒 </span><span class="wa-bold">نسيت شيئاً؟</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، لاحظنا أنك تركت <span class="wa-var">{{اسم المنتج}}</span> في سلة تسوقك 👀<br><br>
+          سلتك محفوظة لك هنا: <span class="wa-var">{{رابط السلة}}</span><br><br>
+          المخزون محدود — لا تفوّت قطعتك! ⏰
+          <div class="wa-time">✓✓ 11:47</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Cart abandoned + 30 minutes</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Recovery</span>
+          <div class="roi-badge"><div class="roi-value">+14%</div><div class="roi-sub">additional recovery</div></div>
+        </div>
+        <h3 class="card-title">Second Nudge with Social Proof (3 hours)</h3>
+        <p class="card-desc">Still no discount — instead, add social proof. "12 people ordered this today" or a customer review pulls hesitant buyers over the line without sacrificing margin.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">⭐ </span><span class="wa-bold">ماذا يقول عملاؤنا؟</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، <span class="wa-var">{{اسم المنتج}}</span> حصل على تقييم ⭐⭐⭐⭐⭐ من <span class="wa-var">{{247}}</span> عميل 🌟<br><br>
+          "رائع جداً، التوصيل سريع والجودة تفوق التوقعات" — سارة، الرياض<br><br>
+          أكمل طلبك: <span class="wa-var">{{رابط السلة}}</span>
+          <div class="wa-time">✓✓ 2:32</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Cart abandoned + 3 hours (still not purchased)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Recovery</span>
+          <div class="roi-badge"><div class="roi-value">+8%</div><div class="roi-sub">final-stage recovery</div></div>
+        </div>
+        <h3 class="card-title">Last Chance Offer (24 hours)</h3>
+        <p class="card-desc">Only at this final stage do you release a small discount. Smart targeting means you protect margin on the 70% who would have converted anyway, and only "pay" for the last 8–10%.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🎁 </span><span class="wa-bold">هدية خاصة لك — آخر فرصة!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، بما أنك اهتممت بـ <span class="wa-var">{{اسم المنتج}}</span>... إليك كود خصم خاص بك:<br><br>
+          كود: <span class="wa-var">SAVE10</span> — خصم 10% ✂️<br>
+          صالح لمدة <span class="wa-var">4 ساعات فقط</span><br><br>
+          أكمل طلبك: <span class="wa-var">{{رابط السلة}}</span>
+          <div class="wa-time">✓✓ 11:20</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Cart abandoned + 24 hours (still not purchased)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Recovery</span>
+          <div class="roi-badge"><div class="roi-value">+19%</div><div class="roi-sub">on-sale conversion</div></div>
+        </div>
+        <h3 class="card-title">Price Drop Alert on Wishlist Item</h3>
+        <p class="card-desc">If a customer browsed or wishlisted a product and it goes on sale, they get an instant WhatsApp alert. This converts fence-sitters who were waiting for the right moment.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">📉 </span><span class="wa-bold">انخفض سعر ما أعجبك!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>! المنتج الذي أعجبك أصبح سعره أقل الآن 🎊<br><br>
+          <span class="wa-var">{{اسم المنتج}}</span><br>
+          ~~<span class="wa-var">350 ريال</span>~~ ← <span class="wa-var">285 ريال</span> 💥<br><br>
+          اشتري الآن: <span class="wa-var">{{رابط المنتج}}</span>
+          <div class="wa-time">✓✓ 10:05</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Product price drops + customer viewed/wishlisted it</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Recovery</span>
+          <div class="roi-badge"><div class="roi-value">+22%</div><div class="roi-sub">urgency-based conversion</div></div>
+        </div>
+        <h3 class="card-title">Back-in-Stock Alert</h3>
+        <p class="card-desc">Customer viewed an out-of-stock item. The moment it restocks, WhatsApp fires instantly. These buyers are pre-sold — they've been waiting. Conversion rate is extraordinary.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🔔 </span><span class="wa-bold">المنتج عاد للمخزون!</span><br><br>
+          خبر ينتظره كثيرون! 🎉 <span class="wa-var">{{اسم المنتج}}</span> الذي اهتممت به أصبح متوفراً الآن.<br><br>
+          ⚠️ الكمية محدودة جداً — كون من أوائل المحظوظين!<br><br>
+          اطلب الآن: <span class="wa-var">{{رابط المنتج}}</span>
+          <div class="wa-time">✓✓ 1:14</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Item restocked + customer had viewed it</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 3: RETENTION -->
+<!-- ============================================ -->
+<section class="cat-section" id="retention">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 03 — Retention</div>
+      <h2 class="cat-title">🔁 Retention &<br>Repeat Buying</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">3.2x</div>
+      <div class="roi-label">LTV Increase Over 6 Months</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+35%</div><div class="roi-sub">replenishment revenue</div></div>
+        </div>
+        <h3 class="card-title">Perfume Replenishment Trigger (Day 55)</h3>
+        <p class="card-desc">Based on average perfume lifespan, fire at day 55 post-delivery. The customer is thinking about running out — you beat them to the thought. Highest converting retention message in the category.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🌹 </span><span class="wa-bold">عطرك المفضل يوشك على النفاد؟</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، مضى شهران تقريباً على <span class="wa-var">{{اسم العطر}}</span>... هل بدأت تحسن قلة الرائحة المميزة؟ 😊<br><br>
+          أعد تعبئة مخزونك قبل النفاد 👇<br>
+          <span class="wa-var">{{رابط المنتج}}</span><br><br>
+          🎁 اطلب اليوم واحصل على شحن مجاني!
+          <div class="wa-time">✓✓ 10:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Purchase date + 55 days (perfume category)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+28%</div><div class="roi-sub">cross-category sales</div></div>
+        </div>
+        <h3 class="card-title">Cross-Category Lifestyle Bridge</h3>
+        <p class="card-desc">3 weeks after buying jewelry, introduce home décor or fashion. Never pitch the category directly — bridge with a lifestyle angle. "You have great taste, so we think you'll love this too."</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">✨ </span><span class="wa-bold">مجموعة جديدة اخترناها خصيصاً لك</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، بناءً على ذوقك الراقي في اختيار <span class="wa-var">{{المنتج السابق}}</span>... واثقون أن هذه المجموعة ستعجبك! 🏮<br><br>
+          <span class="wa-var">{{فئة المنتج الجديد — ديكور/عباية/عطر}}</span><br><br>
+          استكشفي الآن: <span class="wa-var">{{رابط المجموعة}}</span>
+          <div class="wa-time">✓✓ 11:30</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>First category purchase + 21 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+52%</div><div class="roi-sub">Eid campaign revenue</div></div>
+        </div>
+        <h3 class="card-title">Eid Al-Fitr Early Access Campaign</h3>
+        <p class="card-desc">Existing customers get WhatsApp access to new Eid collections 48 hours before the general public. Creates exclusivity, drives early sales, and deepens brand loyalty during the biggest gifting season.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🌙 </span><span class="wa-bold">حصري لعملائنا — قبل الجميع!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، كعميل مميز لدينا، لك حق الوصول الحصري لمجموعة العيد قبل 48 ساعة من إطلاقها للعموم! 🎊<br><br>
+          هدايا لا تُقاوَم بتغليف فاخر — سارعي قبل نفاد الكميات:<br>
+          <span class="wa-var">{{رابط المجموعة الحصرية}}</span>
+          <div class="wa-time">✓✓ 9:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Eid − 10 days, existing customer segment</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+44%</div><div class="roi-sub">National Day revenue</div></div>
+        </div>
+        <h3 class="card-title">Saudi National Day Collection Drop (Sep 23)</h3>
+        <p class="card-desc">A pre-built annual campaign. Sends a patriotic-toned message on Sep 20 teasing a limited National Day collection. Most Saudi ecom brands ignore this — showing up is half the battle.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🇸🇦 </span><span class="wa-bold">احتفلي معنا باليوم الوطني!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، بمناسبة اليوم الوطني السعودي الغالي 🎉<br><br>
+          أطلقنا مجموعة محدودة بتصاميم مستوحاة من التراث السعودي الأصيل.<br><br>
+          🏷 كود الخصم الوطني: <span class="wa-var">KSA94</span><br>
+          اكتشفي المجموعة: <span class="wa-var">{{رابط المجموعة}}</span>
+          <div class="wa-time">✓✓ 8:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>September 20 (3 days before National Day)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+38%</div><div class="roi-sub">birthday order value vs avg</div></div>
+        </div>
+        <h3 class="card-title">Birthday Gift Offer</h3>
+        <p class="card-desc">Sent 3 days before the customer's birthday with a special personalized gift offer. Birthday orders have 38% higher AOV on average because customers treat themselves — meet that moment.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🎂 </span><span class="wa-bold">عيد ميلاد سعيد يا {{اسم العميل}}!</span><br><br>
+          يتمنى لك الفريق كل عام وأنتِ بخير وسعادة 🌸<br><br>
+          هديتك منا: خصم <span class="wa-var">15%</span> على أي طلب لمدة 3 أيام فقط 🎁<br><br>
+          كود: <span class="wa-var">BDAY15</span><br>
+          دلّلي نفسك: <span class="wa-var">{{رابط المتجر}}</span>
+          <div class="wa-time">✓✓ 9:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Customer birthday − 3 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Retention</span>
+          <div class="roi-badge"><div class="roi-value">+26%</div><div class="roi-sub">referral-driven orders</div></div>
+        </div>
+        <h3 class="card-title">Referral Engine Activation (Post 2nd Purchase)</h3>
+        <p class="card-desc">After a customer's second order, they're a proven loyalist. Fire a referral offer — "Give your friend 50 SAR, you get 50 SAR." In Saudi culture, gifting recommendations is natural and this converts powerfully.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">💝 </span><span class="wa-bold">شاركي السعادة واكسبي!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، أنتِ من عملائنا المميزين — شكراً جزيلاً! 🤍<br><br>
+          شاركي رابطك الخاص مع صديقاتك:<br>
+          ✅ صديقتك تحصل على <span class="wa-var">50 ريال</span> خصم<br>
+          ✅ أنتِ تحصلين على <span class="wa-var">50 ريال</span> رصيد<br><br>
+          رابطك الخاص: <span class="wa-var">{{رابط الإحالة}}</span>
+          <div class="wa-time">✓✓ 2:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Second purchase confirmed</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 4: RETURN PREVENTION -->
+<!-- ============================================ -->
+<section class="cat-section" id="returns">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 04 — Prevention</div>
+      <h2 class="cat-title">↩ Return Prevention<br>Automation</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">−67%</div>
+      <div class="roi-label">Return Rate Reduction</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Prevention</span>
+          <div class="roi-badge"><div class="roi-value">−38%</div><div class="roi-sub">post-delivery returns</div></div>
+        </div>
+        <h3 class="card-title">Expectation Setting Before Delivery</h3>
+        <p class="card-desc">Most returns happen because reality didn't match expectation. Fire a pre-delivery message with a short care guide, size notes, or "what to expect" — particularly vital for fashion and jewelry.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">📖 </span><span class="wa-bold">قبل وصول طلبك — اقرأ هذا!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، طلبك في الطريق إليك! 🎁<br><br>
+          بعض النصائح لأفضل تجربة مع <span class="wa-var">{{اسم المنتج}}</span>:<br>
+          📏 المقاس: <span class="wa-var">{{ملاحظة المقاس}}</span><br>
+          🌿 العناية: <span class="wa-var">{{تعليمات العناية}}</span><br>
+          ✨ نصيحة الاستخدام: <span class="wa-var">{{نصيحة}}</span><br><br>
+          أي سؤال؟ تواصلي معنا مباشرة 💬
+          <div class="wa-time">✓✓ 8:30</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Order shipped + 24 hours (day before delivery)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Prevention</span>
+          <div class="roi-badge"><div class="roi-value">−29%</div><div class="roi-sub">size-related returns</div></div>
+        </div>
+        <h3 class="card-title">Post-Delivery Fit Check (Fashion/Abaya)</h3>
+        <p class="card-desc">Sent 3 hours after delivery. Proactively asks "Did everything fit?" with a link to the size exchange guide. Intercepts return intention before the customer even decides to initiate it.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">👗 </span><span class="wa-bold">كيف المقاس؟</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، نأمل أن <span class="wa-var">{{اسم المنتج}}</span> أعجبك! 🌸<br><br>
+          هل المقاس مناسب؟<br>
+          ✅ ممتاز!<br>
+          🔄 أحتاج تبديل المقاس<br>
+          💬 لديّ استفسار<br><br>
+          التبديل مجاني خلال 7 أيام من الاستلام 🎁
+          <div class="wa-time">✓✓ 4:40</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivered + 3 hours (fashion category)</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Prevention</span>
+          <div class="roi-badge"><div class="roi-value">+45%</div><div class="roi-sub">return-to-exchange conversion</div></div>
+        </div>
+        <h3 class="card-title">Return Request Interception — Offer Exchange First</h3>
+        <p class="card-desc">When a customer initiates a return, fire a WhatsApp message instantly that offers store credit or an exchange BEFORE the return is processed. Converts 45% of returns into exchanges — you keep the revenue.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🔄 </span><span class="wa-bold">قبل إتمام الإرجاع — لدينا اقتراح!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، تلقينا طلب الإرجاع الخاص بك. نأسف على عدم رضاك! 🙏<br><br>
+          بدلاً من الاسترداد، هل تفضلين:<br>
+          🔄 استبدال المنتج بآخر مجاناً<br>
+          💳 رصيد إضافي بقيمة <span class="wa-var">+10%</span> للاستخدام مستقبلاً<br><br>
+          ردي علينا أو تواصلي مع فريقنا 👇
+          <div class="wa-time">✓✓ 3:15</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Return request submitted</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-prevention">Prevention</span>
+          <div class="roi-badge"><div class="roi-value">−21%</div><div class="roi-sub">impulse return rate</div></div>
+        </div>
+        <h3 class="card-title">Styling / Usage Inspiration (Post-Delivery Day 2)</h3>
+        <p class="card-desc">Buyer's remorse peaks 24–48 hours after delivery. Send a beautiful styling guide, a "how to wear it" video, or an oud pairing guide. Creating emotional investment in the product kills the return impulse.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">💡 </span><span class="wa-bold">4 طرق لارتداء قطعتك الجديدة</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، أعددنا لك دليل الإطلالات مع <span class="wa-var">{{اسم المنتج}}</span> ✨<br><br>
+          تعرفي على أجمل 4 طرق لتنسيقها مع إطلالاتك اليومية:<br>
+          <span class="wa-var">{{رابط الفيديو/دليل الاستخدام}}</span><br><br>
+          شاركينا إطلالتك بالوسم <span class="wa-var">{{#اسم_المتجر}}</span> 📸
+          <div class="wa-time">✓✓ 12:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivered + 48 hours</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 5: PROACTIVE MARKETING -->
+<!-- ============================================ -->
+<section class="cat-section" id="marketing">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 05 — Marketing</div>
+      <h2 class="cat-title">📣 Proactive<br>Marketing Blasts</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">8–14x</div>
+      <div class="roi-label">ROI vs Paid Social Ads</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-marketing">Marketing</span>
+          <div class="roi-badge"><div class="roi-value">+61%</div><div class="roi-sub">vs email on same campaign</div></div>
+        </div>
+        <h3 class="card-title">New Collection Drop Announcement</h3>
+        <p class="card-desc">Segment by past purchase category and send hyper-relevant new arrivals. A perfume buyer gets the new oud collection. A jewelry buyer gets the new gold line. Relevance multiplies conversion dramatically.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🆕 </span><span class="wa-bold">مجموعة جديدة وصلت للتو!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، عرفنا أنك من عاشقات <span class="wa-var">{{العود/الذهب/الأزياء}}</span>...<br><br>
+          أطلقنا للتو مجموعة <span class="wa-var">{{اسم المجموعة}}</span> — قطع لن تجديها في أي مكان آخر ✨<br><br>
+          كن أول من يتسوق: <span class="wa-var">{{رابط المجموعة}}</span>
+          <div class="wa-time">✓✓ 10:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>New collection published, segment by category</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-marketing">Marketing</span>
+          <div class="roi-badge"><div class="roi-value">+78%</div><div class="roi-sub">flash sale revenue vs email</div></div>
+        </div>
+        <h3 class="card-title">Flash Sale (4-Hour Urgency Window)</h3>
+        <p class="card-desc">A WhatsApp flash sale with a hard 4-hour window. The open rate ensures near-instant awareness. Most of the revenue is earned in the first 60 minutes. The most powerful marketing message format in Saudi ecom.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">⚡ </span><span class="wa-bold">فلاش سيل — 4 ساعات فقط!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>! تخفيض <span class="wa-var">30%</span> على المجموعة الكاملة لمدة 4 ساعات فقط! ⏰<br><br>
+          ينتهي الساعة: <span class="wa-var">{{10:00 مساءً}}</span><br><br>
+          كود الخصم: <span class="wa-var">FLASH30</span><br>
+          تسوقي الآن قبل نفاد المخزون: <span class="wa-var">{{رابط المتجر}}</span>
+          <div class="wa-time">✓✓ 6:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Manual campaign, 6:00 PM Thursday for max Saudi engagement</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-marketing">Marketing</span>
+          <div class="roi-badge"><div class="roi-value">+34%</div><div class="roi-sub">gifting season AOV</div></div>
+        </div>
+        <h3 class="card-title">Gifting Reminder (Eid / Valentine / Mother's Day)</h3>
+        <p class="card-desc">Sent 7 days before the gifting occasion with ready-made gift bundle options. Saudi buyers love gift sets — pre-curating them and pushing via WhatsApp captures the decision before they look elsewhere.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🎁 </span><span class="wa-bold">باقي 7 أيام على العيد — جهّز هديتك!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، العيد قريب! 🌙<br><br>
+          اخترنا لك أجمل باقات الهدايا الجاهزة للتغليف والتوصيل:<br><br>
+          🎀 باقة الفخامة — <span class="wa-var">450 ريال</span><br>
+          💐 باقة المشاعر — <span class="wa-var">280 ريال</span><br>
+          ✨ باقة التميز — <span class="wa-var">680 ريال</span><br><br>
+          اطلبها الآن: <span class="wa-var">{{رابط الباقات}}</span>
+          <div class="wa-time">✓✓ 11:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Gifting occasion − 7 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-marketing">Marketing</span>
+          <div class="roi-badge"><div class="roi-value">+29%</div><div class="roi-sub">average order value</div></div>
+        </div>
+        <h3 class="card-title">Bundle Upsell After Checkout</h3>
+        <p class="card-desc">Sent 10 minutes after purchase with a "complete the look/set" bundle offer at a discount. The customer is already in buying mode — this is the highest-converting upsell window in ecom.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">✨ </span><span class="wa-bold">أكملي الإطلالة وادفعي أقل!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، طلبك في أيدٍ أمينة! 🙏<br><br>
+          عملاء اشتروا <span class="wa-var">{{المنتج}}</span> أضافوا أيضاً:<br>
+          💎 <span class="wa-var">{{المنتج المقترح}}</span> — عادةً <span class="wa-var">180 ريال</span><br><br>
+          أضيفيه لطلبك الحالي بـ <span class="wa-var">145 ريال</span> فقط (توفيري <span class="wa-var">35 ريال</span>!) في خلال 15 دقيقة ⏰<br>
+          أضيفيه الآن: <span class="wa-var">{{رابط الإضافة}}</span>
+          <div class="wa-time">✓✓ 10:42</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Order placed + 10 minutes</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 6: VIP & LOYALTY -->
+<!-- ============================================ -->
+<section class="cat-section" id="vip">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 06 — VIP</div>
+      <h2 class="cat-title">👑 VIP &<br>Loyalty Programs</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">4.8x</div>
+      <div class="roi-label">VIP vs Average Customer LTV</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-vip">VIP</span>
+          <div class="roi-badge"><div class="roi-value">+120%</div><div class="roi-sub">VIP annual spend vs non-VIP</div></div>
+        </div>
+        <h3 class="card-title">VIP Tier Unlock Announcement</h3>
+        <p class="card-desc">When a customer crosses 1,500 SAR lifetime spend, they receive a VIP welcome message. Identity-based status ("you are now VIP") is more powerful than discount-based loyalty in the luxury segment.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">👑 </span><span class="wa-bold">مبروك! أنتِ الآن VIP!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، بلغت مشترياتك مستوى VIP الحصري 🌟<br><br>
+          <span class="wa-bold">مزاياك الجديدة:</span><br>
+          ✅ وصول مبكر لجميع المجموعات الجديدة<br>
+          ✅ خدمة عملاء مخصصة ذات أولوية<br>
+          ✅ خصم دائم 8% على جميع المنتجات<br>
+          ✅ هدية مجانية مع كل طلب فوق 500 ريال<br><br>
+          مرحباً بك في العائلة المميزة 💎
+          <div class="wa-time">✓✓ 3:30</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Lifetime spend crosses 1,500 SAR threshold</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-vip">VIP</span>
+          <div class="roi-badge"><div class="roi-value">+41%</div><div class="roi-sub">points redemption revenue</div></div>
+        </div>
+        <h3 class="card-title">Points Balance Nudge (Near Redemption)</h3>
+        <p class="card-desc">When a customer is within 100 points of a reward, send a WhatsApp message. The "so close" psychology is a powerful motivator — this single automation drives a measurable order spike every time it runs.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🏆 </span><span class="wa-bold">أنتِ قريبة جداً من المكافأة!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، لديكِ <span class="wa-var">{{420}}</span> نقطة! تحتاجين فقط <span class="wa-var">80 نقطة</span> إضافية للحصول على:<br><br>
+          🎁 <span class="wa-bold">كارت هدية بقيمة 100 ريال</span><br><br>
+          اطلبي منتجاً واحداً بقيمة 80 ريال فأكثر لتحصلي على مكافأتك:<br>
+          <span class="wa-var">{{رابط المتجر}}</span>
+          <div class="wa-time">✓✓ 5:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Points balance within 100pts of next reward</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-vip">VIP</span>
+          <div class="roi-badge"><div class="roi-value">+55%</div><div class="roi-sub">expiry-driven orders</div></div>
+        </div>
+        <h3 class="card-title">Points Expiry Warning</h3>
+        <p class="card-desc">Sent 7 days before loyalty points expire. Loss aversion is the strongest buying motivator in behavioral economics — "you're about to lose 150 SAR" converts at 55% higher than any positive offer.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">⏳ </span><span class="wa-bold">نقاطك ستنتهي خلال 7 أيام!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، تنبيه عاجل! 🚨<br>
+          لديكِ <span class="wa-var">{{850}}</span> نقطة (تساوي <span class="wa-var">{{85 ريال}}</span>) ستنتهي صلاحيتها في <span class="wa-var">{{التاريخ}}</span>.<br><br>
+          لا تدعيها تضيع! استخدميها الآن قبل فوات الأوان 👇<br>
+          <span class="wa-var">{{رابط المتجر}}</span>
+          <div class="wa-time">✓✓ 9:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Points expiry date − 7 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 7: SATISFACTION & REVIEWS -->
+<!-- ============================================ -->
+<section class="cat-section" id="satisfaction">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 07 — Satisfaction</div>
+      <h2 class="cat-title">⭐ Reviews &<br>Satisfaction</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">+4.1★</div>
+      <div class="roi-label">Avg. Rating After Automation</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Satisfaction</span>
+          <div class="roi-badge"><div class="roi-value">+340%</div><div class="roi-sub">review volume increase</div></div>
+        </div>
+        <h3 class="card-title">Review Request (Day 7 Post-Delivery)</h3>
+        <p class="card-desc">Day 7 is the sweet spot — the honeymoon period is still alive, the product is in use, and the experience is fresh. A friendly WhatsApp review request with a direct link generates 340% more reviews than an email.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🌟 </span><span class="wa-bold">رأيك يهمنا!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، مضى أسبوع على استلام <span class="wa-var">{{اسم المنتج}}</span> — كيف هو؟ 😊<br><br>
+          تقييمك يساعدنا على التحسين ويساعد عملاء آخرين على اتخاذ قرارهم.<br><br>
+          قيّمي تجربتك (30 ثانية فقط): <span class="wa-var">{{رابط التقييم}}</span> ⭐
+          <div class="wa-time">✓✓ 10:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivered + 7 days</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-retention">Satisfaction</span>
+          <div class="roi-badge"><div class="roi-value">−90%</div><div class="roi-sub">public negative reviews</div></div>
+        </div>
+        <h3 class="card-title">NPS Score Intercept (Unhappy Customers)</h3>
+        <p class="card-desc">Ask a 1–10 satisfaction score first via WhatsApp. Anyone who scores 1–6 gets a private resolution flow before they're ever asked to leave a public review. Saves your rating and turns problems into loyalty moments.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">💬 </span><span class="wa-bold">سؤال واحد سريع!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، من 1 إلى 10 — كيف تقيّمين تجربتك الأخيرة معنا؟<br><br>
+          1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟<br><br>
+          <span style="color:var(--muted); font-size:11px;">[If score ≤ 6 → private resolution flow fires]<br>[If score ≥ 7 → review link fires]</span>
+          <div class="wa-time">✓✓ 11:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Delivered + 5 days, before review request</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================ -->
+<!-- SECTION 8: WIN-BACK -->
+<!-- ============================================ -->
+<section class="cat-section" id="winback">
+  <div class="cat-header">
+    <div>
+      <div class="cat-label">Category 08 — Win-Back</div>
+      <h2 class="cat-title">💔 Dormant Customer<br>Win-Back</h2>
+    </div>
+    <div class="cat-roi-total">
+      <div class="roi-big">+18%</div>
+      <div class="roi-label">Reactivation Rate</div>
+    </div>
+  </div>
+
+  <div class="ideas-grid">
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-winback">Win-Back</span>
+          <div class="roi-badge"><div class="roi-value">+16%</div><div class="roi-sub">60-day reactivation</div></div>
+        </div>
+        <h3 class="card-title">"We Miss You" — 60 Day Dormant</h3>
+        <p class="card-desc">First gentle win-back. No offer yet — just a warm message showing what's new. Many customers simply forgot you existed. One message brings them back without any margin sacrifice.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">🤍 </span><span class="wa-bold">اشتقنا إليكِ!</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، مضى وقت لم نرَكِ فيه! 🥺<br><br>
+          أضفنا الكثير منذ آخر زيارة لكِ — عطور جديدة، مجموعات حصرية، وعروض خاصة.<br><br>
+          عودي وانظري ما يستحق انتباهك: <span class="wa-var">{{رابط المتجر}}</span> 👀
+          <div class="wa-time">✓✓ 7:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Last purchase date + 60 days, no new order</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-winback">Win-Back</span>
+          <div class="roi-badge"><div class="roi-value">+21%</div><div class="roi-sub">90-day reactivation with offer</div></div>
+        </div>
+        <h3 class="card-title">Exclusive "Come Back" Offer — 90 Days</h3>
+        <p class="card-desc">Now introduce a real offer. Frame it as exclusive and personal — not a generic blast. "We made this for you" language dramatically outperforms "Here's a sale" language in Saudi luxury ecom.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">💌 </span><span class="wa-bold">أعددنا لكِ شيئاً خاصاً</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، بما أنكِ لم تزورينا منذ فترة، أردنا أن نُعبّر عن تقديرنا بطريقة خاصة:<br><br>
+          🎁 <span class="wa-bold">15% خصم حصري لكِ فقط</span><br>
+          كود: <span class="wa-var">WELCOME15</span><br>
+          صالح لـ 48 ساعة فقط ⏰<br><br>
+          عودي وتسوقي: <span class="wa-var">{{رابط المتجر}}</span>
+          <div class="wa-time">✓✓ 9:30</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Last purchase + 90 days, still no new order</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-meta">
+          <span class="card-type type-winback">Win-Back</span>
+          <div class="roi-badge"><div class="roi-value">+9%</div><div class="roi-sub">final-stage recovery</div></div>
+        </div>
+        <h3 class="card-title">Final Breakup Message — 120 Days</h3>
+        <p class="card-desc">The counter-intuitive "breakup" message. "We'll stop messaging you soon" creates urgency through loss of access, not discount. This reverse psychology consistently reactivates 8–12% of customers nothing else reached.</p>
+      </div>
+      <div class="msg-preview">
+        <div class="msg-preview-label">Message Preview</div>
+        <div class="wa-bubble">
+          <span class="wa-emoji">👋 </span><span class="wa-bold">هل نودّعك؟</span><br><br>
+          <span class="wa-var">{{اسم العميل}}</span>، لاحظنا غيابك الطويل ونحن نحترم وقتك تماماً.<br><br>
+          خلال 3 أيام سنوقف رسائلنا إليكِ تلقائياً — ما لم ترغبي في البقاء معنا! 💔<br><br>
+          هل تودّين الاستمرار في تلقي عروضنا الحصرية؟<br>
+          ✅ نعم، ابقيني على القائمة<br>
+          ❌ لا شكراً
+          <div class="wa-time">✓✓ 11:00</div>
+        </div>
+      </div>
+      <div class="card-bottom">
+        <div class="trigger-label">⚡ Trigger: <span>Last purchase + 120 days, still dormant</span></div>
+        <div class="impact-bar">
+          <div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot on"></div><div class="impact-dot"></div><div class="impact-dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FLOW DIAGRAM -->
+<div class="flow-wrap">
+  <div class="flow-title">📊 Complete Customer WhatsApp Journey — At a Glance</div>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-node active">🛒</div>
+      <div class="flow-time">Immediate</div>
+      <div class="flow-label">Cart<br>Abandon Alert</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">✅</div>
+      <div class="flow-time">+0 min</div>
+      <div class="flow-label">Order<br>Confirmation</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">🚚</div>
+      <div class="flow-time">Dispatch</div>
+      <div class="flow-label">Tracking<br>Link Sent</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">📖</div>
+      <div class="flow-time">Day before</div>
+      <div class="flow-label">Expectation<br>Setting</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">🎉</div>
+      <div class="flow-time">+1hr</div>
+      <div class="flow-label">Delivered +<br>Soft Upsell</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">💡</div>
+      <div class="flow-time">Day 2</div>
+      <div class="flow-label">Styling<br>Inspiration</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">⭐</div>
+      <div class="flow-time">Day 7</div>
+      <div class="flow-label">NPS +<br>Review</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node active">🔁</div>
+      <div class="flow-time">Day 55</div>
+      <div class="flow-label">Replenishment<br>Trigger</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step">
+      <div class="flow-node">💔</div>
+      <div class="flow-time">Day 90+</div>
+      <div class="flow-label">Win-Back<br>Sequence</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-brand">WA_AUTO</div>
+  <div class="footer-note">WhatsApp Automation Playbook for Saudi eCommerce — 40+ Ideas, Real ROI</div>
+  <div class="footer-note" style="color:var(--green);">ابدأ التشغيل خلال 72 ساعة</div>
+</footer>
+
+<script>
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'start'});
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Animate cards on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((el, i) => {
+    if (el.isIntersecting) {
+      setTimeout(() => {
+        el.target.style.opacity = '1';
+        el.target.style.transform = 'translateY(0)';
+      }, el.target.dataset.delay || 0);
+      observer.unobserve(el.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.idea-card').forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  el.dataset.delay = (i % 3) * 80;
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
